@@ -86,6 +86,20 @@
 					subMenus: [],
 				},
 				{
+					title: 'Agendamiento' as string,
+					urlName: 'Agendamiento',
+					parent: 'dashboardInicio',
+					subMenus: [],
+					
+				},
+				
+				{
+					title: 'Resumen Cita' as string,
+					urlName: 'resumenCita',
+					parent: 'dashboardInicio',
+					subMenus: [],
+				},
+				{
 					title: 'Listar Cita' as string,
 					urlName: 'listarCita',
 					parent: 'dashboardInicio',
