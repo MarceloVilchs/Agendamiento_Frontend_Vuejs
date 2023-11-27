@@ -54,19 +54,40 @@
             <input type="text" id="phone2" v-model="formData.phone2" placeholder="XX1234567" class="elevation-1">
           </div>
 
-          <v-btn class="mt-10" style="background-color: rgb(85, 250, 173);" type="submit">
-            Registrar
-          </v-btn>
+          <button class="mt-10 text-white btn-register btn-lg rounded-pill btn-grande"  type="submit">
+            <b>Registrar</b>
+          </button>
+
+              <!-- Sección para mostrar mensaje después del registro exitoso -->
+              <v-dialog v-model="exitDialog">
+            <v-card>
+              <v-card-title>Registro Exitoso</v-card-title>
+              <v-card-text>
+                <p>¡Registrado con éxito!</p>
+              </v-card-text>
+              <v-card-actions>
+                <button class="mt-10 text-white btn-primary btn-lg rounded-pill btn-grande"  @click="irAInicio">
+                  <b>Aceptar</b>
+                </button>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
 
           <v-dialog v-model="showDialog">
             <v-card>
+
               <v-card-title>Contraseñas no coinciden</v-card-title>
               <v-card-text>
                 Las contraseñas que ingresaste no coinciden. Por favor, corrige la contraseña.
               </v-card-text>
+
               <v-card-actions>
-                <v-btn @click="showDialog = false">Aceptar</v-btn>
+                <button class="mt-10 text-white btn-secondary btn-lg rounded-pill btn-grande"  @click="showDialog = false">
+                  <b>Aceptar</b>
+                </button>
               </v-card-actions>
+
+              
             </v-card>
           </v-dialog>
         </form>
@@ -75,37 +96,6 @@
   </div>
 </template>
   
-<style>
-.custom-label {
-  margin-bottom: 10px;
-  padding-right: 300px;
-}
-
-.form-container {
-  display: flex;
-  justify-content: center;
-  max-width: 600px;
-  /* Ajusta el ancho máximo según sea necesario */
-  margin: 0 auto;
-  /* Centra el contenedor */
-}
-
-.form-group {
-  width: 100%;
-  max-width: 400px;
-  /* Ajusta según sea necesario */
-  margin: 0 auto;
-  /* Centra el formulario */
-}
-
-.elevation-1 {
-  width: 100%;
-  padding: 10px;
-  box-sizing: border-box;
-}
-</style>
-  
-
 
 <script lang="ts">
 import axios, { AxiosRequestConfig } from "axios";
@@ -124,9 +114,13 @@ interface FormData {
   phone2: string;
 }
 
+
+
 @Component({
   name: "registros",
 })
+
+
 export default class createAccount extends Vue {
   formData: FormData = {
     email: "",
@@ -141,53 +135,117 @@ export default class createAccount extends Vue {
   };
 
   showDialog: boolean = false;
+  exitDialog: boolean = false;
 
-  mounted(): void {
-    this.postData(); // Llamada al método postData
+  public async registerAccount() {
+    try {
+      // Verificar si las contraseñas coinciden
+      if (this.formData.pass_ !== this.formData.pass_confirm) {
+        // Mostrar el diálogo si las contraseñas no coinciden
+        this.showDialog = true;
+        return;
+      }
+
+      // Realizar el registro y manejar la respuesta exitosa
+      await this.postData();
+      
+      // Registro exitoso
+      this.exitDialog = true;
+    } catch (error) {
+      // Manejar errores en la solicitud
+      console.error("Error en el registro:", error);
+    }
   }
 
-  public registerAccount() {
-    // Código del método registerAccount...
-    let dt = JSON.stringify(this.formData);
-
-    let config: AxiosRequestConfig = { // Definición de la variable config
-      method: "post",
-      url: process.env.VUE_APP_API + "/createAccount/createAccount1",
-      data: dt,
-      headers: {
-        Authorization: `Bearer ${this.$store.state.token}`,
-        "Content-Type": "application/json",
-      },
-    };
-
-    axios(config)
-      .then((response) => {
-        // Manejo de respuesta exitosa
-        console.log("Respuesta del servidor:", response.data);
-        // Puedes realizar acciones adicionales aquí según la respuesta del servidor
-      })
-      .catch((error) => {
-        // Manejo de error
-        if (error.response) {
-          // El servidor respondió con un código de estado diferente de 2xx
-          console.error("Error de respuesta del servidor:", error.response.data);
-          console.error("Código de estado:", error.response.status);
-        } else if (error.request) {
-          // La solicitud se hizo pero no se recibió respuesta
-          console.error("No se recibió respuesta del servidor");
-        } else {
-          // Ocurrió un error durante la configuración de la solicitud
-          console.error("Error al configurar la solicitud:", error.message);
+  public irAInicio() {
+    // Navegar a la ruta de inicio
+    this.$router.push({ name: 'MainInicio' })
+      .catch((err: any) => {
+        if (err.name !== 'NavigationDuplicated') {
+          throw err;
         }
-      })
-      .finally(() => {
-        // Esta parte se ejecutará siempre, independientemente de si la solicitud fue exitosa o falló
-        console.log("Solicitud completada");
       });
   }
 
-  private postData(): void {
-    // Aquí puedes realizar acciones en el método postData
+  private postData(): Promise<void> {
+    // Devolver una promesa desde el método
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        // Tu lógica de envío de datos con axios aquí
+        let dt = JSON.stringify(this.formData);
+
+        let config: AxiosRequestConfig = {
+          method: "post",
+          url: process.env.VUE_APP_API + "/createAccount/createAccount1",
+          data: dt,
+          headers: {
+            Authorization: `Bearer ${this.$store.state.token}`,
+            "Content-Type": "application/json",
+          },
+        };
+
+        await axios(config);
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 }
 </script>
+
+
+/* Estilos destinado a la interfaz */
+<style>
+.custom-label {
+  margin-bottom: 10px;
+  padding-right: 300px;
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  max-width: 600px;
+  /* Ajusta el ancho máximo según sea necesario */
+  margin: 0 auto;
+  /* Centra el contenedor */
+}
+
+ /* Tamaño del boton y letras */
+.btn-grande {
+  font-size: 20px; /* Ajusta el tamaño de las Letras */
+  padding: 15px 20px; /* Ajusta el relleno (padding) según sea necesario */
+}
+
+/* Cambiar el color del texto a blanco para los botones */
+.text-white {
+  color: white;
+}
+
+.form-group {
+  width: 100%;
+  max-width: 400px;
+  /* Ajusta según sea necesario */
+  margin: 0 auto;
+  /* Centra el formulario */
+}
+
+.elevation-1 {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.btn-primary {
+  background-color: rgb(85, 250, 173);
+}
+
+.btn-secondary {
+  background-color: rgb(85, 250, 173);
+}
+
+.btn-register {
+  background-color: rgb(85, 250, 173);
+}
+</style>
+  

@@ -22,7 +22,7 @@ const routes: Array<RouteConfig> = [
         name: 'MainInicio',
         component: MainInicio
       },
-      { /* Se agrega la ruta de la nueva vista */
+      { 
         path: '/home/inicio/crud',
         name: 'CRUDView',
         component: CRUDView
@@ -33,20 +33,23 @@ const routes: Array<RouteConfig> = [
         component: createAccount
       },
       {
-        path: '/home/inicio/Agendamiento',
+        path: '/home/inicio/agendamiento',
         name: 'Agendamiento',
-        component: Agendamiento
+        component: Agendamiento,
+        
       },
       {
-        path: '/home/inicio/Resumen',
+        path: '/home/inicio/resumen',
         name: 'resumenCita',
-        component: resumenCita
+        component: resumenCita,
+        
       },
       {
-        path: '/home/inicio/ListarCita',
+        path: '/home/inicio/listarCita',
         name: 'listarCita',
-        component: listarCita
-      },
+        component: listarCita,
+        
+      }
     ] 
   }
 ]

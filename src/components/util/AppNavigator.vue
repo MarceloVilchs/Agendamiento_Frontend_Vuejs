@@ -95,7 +95,7 @@
 				
 				{
 					title: 'Resumen Cita' as string,
-					urlName: 'resumenCita',
+					urlName: 'ResumenCita',
 					parent: 'dashboardInicio',
 					subMenus: [],
 				},
