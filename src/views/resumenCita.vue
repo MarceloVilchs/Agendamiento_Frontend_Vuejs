@@ -6,7 +6,7 @@
 
     <!-- Sección de Resumen de Datos del Paciente -->
     <div class="datos-paciente-container">
-      <h2>Resumen de Datos del Paciente</h2>
+      <h2>Datos del Paciente</h2>
 
       <!-- Mostrar los datos del paciente -->
       <div class="form">
@@ -32,9 +32,9 @@
         </div>
 
         <div class="form-group">
-          <label>Fecha:</label>
-          <div class="input-container">{{ cita.fecha }}</div>
-        </div>
+  <label>Fecha:</label>
+  <div class="input-container">{{ cita.fecha }}</div>
+</div>
 
         <div class="form-group">
           <label>Teléfono:</label>
@@ -42,9 +42,10 @@
         </div>
 
         <div class="form-group">
-          <label>Hora:</label>
-          <div class="input-container">{{ cita.hora }}</div>
-        </div>
+  <label>Hora:</label>
+  <div class="input-container">{{ cita.hora }}</div>
+</div>
+
 
         <div class="form-group">
           <label>estado_pago:</label>
@@ -54,9 +55,49 @@
         <button class="mt-10 text-white btn-primary btn-lg rounded-pill btn-grande"  @click="agendarCita" type="button">
           <b>Agendar Cita</b>
         </button>
-        <button class="mt-10 text-white btn-primary  rounded-pill btn-grande"  @click="irAtras" type="button">
+
+                      <!-- Sección para mostrar mensaje después del registro exitoso -->
+        <v-dialog v-model="exitDialog" persistent max-width="600">
+            <v-card>
+              <v-card-title>¡Cita agendada!</v-card-title>
+              <v-card-text>
+                <p>¡La cita se ha agendado con exito!</p>
+                <p>Presione "Citas" si quiere ver el listado de sus citas o inicio si quiere volver al menu principal</p>
+              </v-card-text>
+              <v-card-actions>
+                <button class="mt-10 text-white btn-primary btn-lg rounded-pill btn-grande"  @click="verListado">
+                  <b>Citas</b>
+                </button>
+
+                <button class="mt-10 text-white btn-primary btn-lg rounded-pill btn-grande"  @click="irAInicio">
+                  <b>Inicio</b>
+                </button>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+
+
+
+        <button class="mt-10 text-white btn-primary  rounded-pill"  @click="irAtras" type="button">
           <b>Atrás</b>
         </button>
+
+        <!-- Sección para mostrar mensaje de error -->
+        <v-dialog v-model="showDialog">
+          <v-card>
+            <v-card-title>Error</v-card-title>
+            <v-card-text>
+              Ha ocurrido un error. Por favor, inténtelo de nuevo.
+            </v-card-text>
+            <v-card-actions>
+              <button class="mt-10 text-white btn-secondary btn-lg rounded-pill btn-grande" @click="showDialog = false">
+                <b>Aceptar</b>
+              </button>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+
       </div>
     </div>
   </div>
@@ -67,6 +108,7 @@ import { Vue, Component } from "vue-property-decorator";
 import axios, { AxiosRequestConfig } from "axios";
 
 interface Cita {
+  // Tipo de tus datos del formulario
   email: string;
   name: string;
   last_name: string;
@@ -80,8 +122,6 @@ interface Cita {
 @Component({
   name: "resumen-cita",
 })
-
-
 export default class ResumenCita extends Vue {
   // Propiedad para recibir los datos de la cita desde el componente padre
   cita: Cita = this.$route.params.cita || {
@@ -95,10 +135,11 @@ export default class ResumenCita extends Vue {
     estado_pago: "",
   };
 
-  
+  exitDialog: boolean = false;
+  showDialog: boolean = false;
+
   // Método para manejar el evento de clic en el botón Agendar
   agendarCita() {
-    // Realiza la solicitud POST con los datos de la cita
     let dt = JSON.stringify(this.cita);
 
     let config: AxiosRequestConfig = {
@@ -113,40 +154,45 @@ export default class ResumenCita extends Vue {
 
     axios(config)
       .then((response) => {
-        // Manejo de respuesta exitosa
         console.log("Respuesta del servidor:", response.data);
-        // Puedes realizar acciones adicionales aquí según la respuesta del servidor
+        this.exitDialog = true;
       })
       .catch((error) => {
-        // Manejo de error
-        if (error.response) {
-          // El servidor respondió con un código de estado diferente de 2xx
-          console.error("Error de respuesta del servidor:", error.response.data);
-          console.error("Código de estado:", error.response.status);
-        } else if (error.request) {
-          // La solicitud se hizo pero no se recibió respuesta
-          console.error("No se recibió respuesta del servidor");
-        } else {
-          // Ocurrió un error durante la configuración de la solicitud
-          console.error("Error al configurar la solicitud:", error.message);
-        }
+        console.error("Error:", error);
+        // Mostrar diálogo de error
+        this.showDialog = true;
       })
       .finally(() => {
-        // Esta parte se ejecutará siempre, independientemente de si la solicitud fue exitosa o falló
         console.log("Solicitud completada");
       });
   }
 
   irAtras() {
     // Navegar a la ruta de inicio
-    this.$router.push({ name: 'Agendamiento' })
-      .catch((err: any) => {
-        if (err.name !== 'NavigationDuplicated') {
-          throw err;
-        }
-      });
+    this.$router.push({ name: "Agendamiento" }).catch((err: any) => {
+      if (err.name !== "NavigationDuplicated") {
+        throw err;
+      }
+    });
   }
 
+  public irAInicio() {
+    // Navegar a la ruta de inicio
+    this.$router.push({ name: "MainInicio" }).catch((err: any) => {
+      if (err.name !== "NavigationDuplicated") {
+        throw err;
+      }
+    });
+  }
+
+  public verListado() {
+    // Navegar a la ruta de inicio
+    this.$router.push({ name: "listarCita" }).catch((err: any) => {
+      if (err.name !== "NavigationDuplicated") {
+        throw err;
+      }
+    });
+  }
 }
 </script>
 
@@ -166,8 +212,8 @@ export default class ResumenCita extends Vue {
   flex-direction: column;
 }
 
- /* Tamaño del boton y letras */
- .btn-grande {
+/* Tamaño del botón y letras */
+.btn-grande {
   font-size: 20px; /* Ajusta el tamaño de las Letras */
   padding: 15px 20px; /* Ajusta el relleno (padding) según sea necesario */
 }

@@ -7,6 +7,7 @@ import createAccount from '../views/createAccount.vue'
 import listarCita from '../views/listarCita.vue'
 import Agendamiento from '../views/Agendamiento.vue'
 import resumenCita from '../views/resumenCita.vue'
+import fechaHora from '../views/fechaHora.vue'
 
 
 Vue.use(VueRouter)
@@ -47,9 +48,8 @@ const routes: Array<RouteConfig> = [
       {
         path: '/home/inicio/listarCita',
         name: 'listarCita',
-        component: listarCita,
-        
-      }
+        component: listarCita, 
+      },
     ] 
   }
 ]

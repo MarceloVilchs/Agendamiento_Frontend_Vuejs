@@ -59,7 +59,7 @@
           </button>
 
               <!-- Sección para mostrar mensaje después del registro exitoso -->
-              <v-dialog v-model="exitDialog">
+              <v-dialog v-model="exitDialog" persistent max-width="600">
             <v-card>
               <v-card-title>Registro Exitoso</v-card-title>
               <v-card-text>
@@ -73,7 +73,7 @@
             </v-card>
           </v-dialog>
 
-          <v-dialog v-model="showDialog">
+          <v-dialog v-model="showDialog" persistent max-width="600">
             <v-card>
 
               <v-card-title>Contraseñas no coinciden</v-card-title>

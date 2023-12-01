@@ -46,8 +46,7 @@ export default {
         fetchCitas() {
             // Simulación de datos de ejemplo
             const citasEjemplo = [
-                { fecha: '2023-11-05', hora: '15:30', pago: 'Por Pagar', nombre: 'Juan Perez Carcamo', telefono: 987654321, correo: 'juan@gmail.com' },
-                { fecha: '2023-11-05', hora: '15:30', pago: 'Por Pagar', nombre: 'María Lopez Rodriguez', telefono: 987654321, correo: 'maria@gmail.com' },
+                { fecha: '30-11-2023', hora: '15:30', pago: 'Por Pagar', nombre: 'Juan Perez Carcamo', telefono: 987654321, correo: 'felipe@gmail.com' },
             ];
             this.citas = citasEjemplo;
         },

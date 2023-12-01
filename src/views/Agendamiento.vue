@@ -83,6 +83,7 @@
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
+import fechaHora from "../views/fechaHora.vue";
 import { Route } from "vue-router";
 import resumenCita from "./resumenCita.vue";
 
@@ -99,6 +100,7 @@ interface Cita {
 
 @Component({
   name: "Agendamiento",
+
 })
 
 export default class Agendamiento extends Vue {
@@ -115,7 +117,7 @@ export default class Agendamiento extends Vue {
 
   mostrarResumen() {
     // Navegar a la ruta del resumen y pasar cita como prop
-    this.$router.push({ name: 'resumenCita', params: { cita: this.cita } })
+    this.$router.push({ name: 'resumenCita', params: { cita: this.cita}  })
       .catch((err: any) => {
         if (err.name !== 'NavigationDuplicated') {
           throw err;
@@ -132,6 +134,8 @@ export default class Agendamiento extends Vue {
         }
       });
   }
+
+
 }
 </script>
 
