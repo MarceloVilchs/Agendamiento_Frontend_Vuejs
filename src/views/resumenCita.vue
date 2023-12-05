@@ -145,32 +145,20 @@ export default class ResumenCita extends Vue {
 get formatoFecha(): string {
   console.log("Fecha antes de formatear:", this.cita.fecha);
 
-  if (this.cita.fecha instanceof Date && !isNaN(this.cita.fecha.getTime())) {
-    // Llama a 'toLocaleDateString' con los argumentos correctos
+  const fecha = new Date(this.cita.fecha);
+
+  if (!isNaN(fecha.getTime())) {
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-    const fechaFormateada = this.cita.fecha.toLocaleDateString('es-ES', options);
+    const fechaFormateada = fecha.toLocaleDateString('es-ES', options);
 
     console.log("Fecha formateada:", fechaFormateada);
-    
     return fechaFormateada;
-  } else if (typeof this.cita.fecha === 'string') {
-    // Intenta analizar la cadena de fecha en un objeto Date
-    const fechaParsed = new Date(this.cita.fecha);
-
-    if (!isNaN(fechaParsed.getTime())) {
-      // La cadena de fecha se pudo analizar correctamente
-      const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-      const fechaFormateada = fechaParsed.toLocaleDateString('es-ES', options);
-
-      console.log("Fecha formateada:", fechaFormateada);
-
-      return fechaFormateada;
-    }
   }
 
   console.error("Fecha no válida");
   return "Fecha no válida";
 }
+
 
 
 
