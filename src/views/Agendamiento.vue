@@ -50,7 +50,7 @@
             <div class="form-group">
           <label for="fecha" class="text-left">Fecha</label>
           <div class="input-container text-center">
-            <button class=" btn-secondary text-white" @click="abrirDialogo">Ver horas</button>
+            <button class=" btn-verHoras text-white rounded-pill btn-lg" @click="abrirDialogo">Ver horas</button>
           </div>
         </div>
 
@@ -61,21 +61,21 @@
           </div>
         </div>
 
-        <div class="button-container">
-          <button class="mt-10  btn-secondary btn-lg rounded-pill text-white btn-grande" @click="irAtras">
-            <b>Atrás</b>
-          </button>
-          <button class="mt-10  btn-primary btn-lg rounded-pill text-white btn-grande" type="submit">
-            <b>Siguiente</b>
-          </button>
-        </div>
+            <div class="button-container">
+        <button class="mt-10 btn-secondary btn-lg rounded-pill text-white btn-grande" @click="irAtras">
+          <b>Atrás</b>
+        </button>
+        <button class="mt-10 btn-primary btn-lg rounded-pill text-white btn-grande" @click="mostrarResumen">
+          <b>Siguiente</b>
+        </button>
+      </div>
 
             <!-- Diálogo para mostrar CalendarioHora -->
-        <v-dialog v-model="verFecha" max-width="600">
-      <CalendarioHora :horasDisponibles="horasDisponibles" @fecha-seleccionada="seleccionarFecha" @hora-seleccionada="seleccionarHora" />
-      <v-btn @click="cerrarDialogo">Confirmar</v-btn>
-      <v-btn @click="cerrarDialogo">Volver atrás</v-btn>
-    </v-dialog>
+            <v-dialog v-model="verFecha" max-width="600">
+              <CalendarioHora :horasDisponibles="horasDisponibles" @fecha-seleccionada="seleccionarFecha" @hora-seleccionada="seleccionarHora" />
+              <v-btn @click="cerrarDialogo">Confirmar</v-btn>
+            </v-dialog>
+
 
       </form>
     </div>
@@ -88,6 +88,7 @@ import CalendarioHora from "../views/CalendarioHora.vue"; // Ajusta la ruta seg�
 
 
 interface Cita {
+  _id: string;
   email: string;
   name: string;
   last_name: string;
@@ -122,8 +123,15 @@ export default class Agendamiento extends Vue {
   verFecha: boolean = false;
 
   mostrarResumen() {
+    // Validar que todos los campos necesarios estén completos antes de navegar
+    if (!this.cita.email || !this.cita.name || !this.cita.last_name || !this.cita.last_name2 || !this.cita.phone || !this.cita.estado_pago || !this.cita.fecha || !this.cita.hora) {
+      console.error("Completa todos los campos antes de continuar");
+      // Puedes mostrar un mensaje de error al usuario si algún campo falta
+      return;
+    }
+
     // Navegar a la ruta del resumen y pasar cita como prop
-    this.$router.push({ name: 'resumenCita', params: { cita: this.cita}  })
+    this.$router.push({ name: 'resumenCita', params: { cita: this.cita } })
       .catch((err: any) => {
         if (err.name !== 'NavigationDuplicated') {
           throw err;
@@ -141,15 +149,11 @@ export default class Agendamiento extends Vue {
       });
   }
 
-  
   seleccionarFecha(fecha: Date) {
     // Asignar la fecha formateada
     this.cita.fecha = fecha;
     console.log("Fecha seleccionada en Agendamiento:", this.cita.fecha);
-
   }
-
-
 
   seleccionarHora(hora: string) {
     this.cita.hora = hora;
@@ -182,6 +186,12 @@ export default class Agendamiento extends Vue {
 /* Aplicar color de fondo verde a los botones */
 .btn-secondary {
   background-color: rgb(85, 250, 173);
+}
+
+.btn-verHoras {
+  background-color: rgb(85, 250, 173);
+  font-size: 20px; /* Ajusta el tamaño de las Letras */
+  padding: 5px 20px; /* Ajusta el relleno (padding) según sea necesario */
 }
 
 .btn-grande {
