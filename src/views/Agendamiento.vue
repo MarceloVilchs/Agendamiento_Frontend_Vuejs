@@ -40,23 +40,17 @@
         </div>
 
         <div class="form-group">
-          <label for="fecha" class="text-left">Fecha:</label>
-          <div class="input-container text-right">
-            <input type="text" v-model="cita.fecha" required class="elevation-1"/>
-          </div>
-        </div>
-
-        <div class="form-group">
           <label for="phone" class="text-left">Teléfono:</label>
           <div class="input-container text-right">
             <input type="text" v-model="cita.phone" required class="elevation-1"/>
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="hora" class="text-left">Hora:</label>
-          <div class="input-container text-right">
-            <input type="text" v-model="cita.hora" required class="elevation-1"/>
+            <!-- Sección para seleccionar fecha y hora -->
+            <div class="form-group">
+          <label for="fecha" class="text-left">Fecha</label>
+          <div class="input-container text-center">
+            <button class=" btn-secondary text-white" @click="abrirDialogo">Ver horas</button>
           </div>
         </div>
 
@@ -76,6 +70,13 @@
           </button>
         </div>
 
+            <!-- Diálogo para mostrar CalendarioHora -->
+        <v-dialog v-model="verFecha" max-width="600">
+      <CalendarioHora :horasDisponibles="horasDisponibles" @fecha-seleccionada="seleccionarFecha" @hora-seleccionada="seleccionarHora" />
+      <v-btn @click="cerrarDialogo">Confirmar</v-btn>
+      <v-btn @click="cerrarDialogo">Volver atrás</v-btn>
+    </v-dialog>
+
       </form>
     </div>
   </div>
@@ -83,16 +84,15 @@
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
-import fechaHora from "../views/fechaHora.vue";
-import { Route } from "vue-router";
-import resumenCita from "./resumenCita.vue";
+import CalendarioHora from "../views/CalendarioHora.vue"; // Ajusta la ruta según la ubicación de tu componente
+
 
 interface Cita {
   email: string;
   name: string;
   last_name: string;
   last_name2: string;
-  fecha: string;
+  fecha: Date;
   phone: string;
   hora: string;
   estado_pago: string;
@@ -100,8 +100,11 @@ interface Cita {
 
 @Component({
   name: "Agendamiento",
-
+  components: {
+    CalendarioHora,
+  },
 })
+
 
 export default class Agendamiento extends Vue {
   cita: Cita = {
@@ -109,11 +112,14 @@ export default class Agendamiento extends Vue {
     name: "",
     last_name: "",
     last_name2: "",
-    fecha: "",
+    fecha: new Date(),
     phone: "",
     hora: "",
     estado_pago: "",
   };
+
+  horasDisponibles: string[] = ["10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30"];
+  verFecha: boolean = false;
 
   mostrarResumen() {
     // Navegar a la ruta del resumen y pasar cita como prop
@@ -135,6 +141,28 @@ export default class Agendamiento extends Vue {
       });
   }
 
+  
+  seleccionarFecha(fecha: Date) {
+    // Asignar la fecha formateada
+    this.cita.fecha = fecha;
+    console.log("Fecha seleccionada en Agendamiento:", this.cita.fecha);
+
+  }
+
+
+
+  seleccionarHora(hora: string) {
+    this.cita.hora = hora;
+  }
+
+//Dialogo para abrir componente CalendarioHora
+  abrirDialogo() {
+    this.verFecha = true;
+  }
+
+  cerrarDialogo() {
+    this.verFecha = false;
+  }
 
 }
 </script>

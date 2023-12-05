@@ -31,10 +31,11 @@
           <div class="input-container">{{ cita.last_name2 }}</div>
         </div>
 
+        <!-- Sección para mostrar la fecha en ResumenCita.vue -->
         <div class="form-group">
-  <label>Fecha:</label>
-  <div class="input-container">{{ cita.fecha }}</div>
-</div>
+          <label for="fecha">Fecha:</label>
+          <div class="input-container">{{ formatoFecha }}</div>
+        </div>
 
         <div class="form-group">
           <label>Teléfono:</label>
@@ -113,7 +114,7 @@ interface Cita {
   name: string;
   last_name: string;
   last_name2: string;
-  fecha: string;
+  fecha: Date | null;
   phone: string;
   hora: string;
   estado_pago: string;
@@ -129,7 +130,7 @@ export default class ResumenCita extends Vue {
     name: "",
     last_name: "",
     last_name2: "",
-    fecha: "",
+    fecha: new Date(),
     phone: "",
     hora: "",
     estado_pago: "",
@@ -137,6 +138,41 @@ export default class ResumenCita extends Vue {
 
   exitDialog: boolean = false;
   showDialog: boolean = false;
+
+  // Propiedad computada para formatear la fecha de manera legible
+// Modifica la propiedad computada formatoFecha en resumenCita
+// Asumiendo que 'this.cita.fecha' es una instancia de Date válida
+get formatoFecha(): string {
+  console.log("Fecha antes de formatear:", this.cita.fecha);
+
+  if (this.cita.fecha instanceof Date && !isNaN(this.cita.fecha.getTime())) {
+    // Llama a 'toLocaleDateString' con los argumentos correctos
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    const fechaFormateada = this.cita.fecha.toLocaleDateString('es-ES', options);
+
+    console.log("Fecha formateada:", fechaFormateada);
+    
+    return fechaFormateada;
+  } else if (typeof this.cita.fecha === 'string') {
+    // Intenta analizar la cadena de fecha en un objeto Date
+    const fechaParsed = new Date(this.cita.fecha);
+
+    if (!isNaN(fechaParsed.getTime())) {
+      // La cadena de fecha se pudo analizar correctamente
+      const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+      const fechaFormateada = fechaParsed.toLocaleDateString('es-ES', options);
+
+      console.log("Fecha formateada:", fechaFormateada);
+
+      return fechaFormateada;
+    }
+  }
+
+  console.error("Fecha no válida");
+  return "Fecha no válida";
+}
+
+
 
   // Método para manejar el evento de clic en el botón Agendar
   agendarCita() {
