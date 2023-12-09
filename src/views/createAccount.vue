@@ -50,7 +50,7 @@
           </div>
 
           <div class="form-group mt-5 text-right mx-auto">
-            <label for="phone2" class="custom-label text-left">Teléfono Fijo: </label>
+            <label for="phone2" class="custom-label text-left">Teléfono Fijo (OPCIONAL): </label>
             <input type="text" id="phone2" v-model="formData.phone2" placeholder="XX1234567" class="elevation-1">
           </div>
 
@@ -100,6 +100,7 @@
 <script lang="ts">
 import axios, { AxiosRequestConfig } from "axios";
 import { Vue, Component } from "vue-property-decorator";
+import * as bcrypt from "bcrypt"; // Importa bcrypt
 
 
 interface FormData {
@@ -146,6 +147,7 @@ export default class createAccount extends Vue {
         return;
       }
 
+
       // Realizar el registro y manejar la respuesta exitosa
       await this.postData();
       
@@ -156,6 +158,7 @@ export default class createAccount extends Vue {
       console.error("Error en el registro:", error);
     }
   }
+
 
   public irAInicio() {
     // Navegar a la ruta de inicio

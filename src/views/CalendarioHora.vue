@@ -87,4 +87,5 @@ export default class CalendarioHora extends Vue {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
 </style>

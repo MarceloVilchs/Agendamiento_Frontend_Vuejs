@@ -47,19 +47,13 @@
         </div>
 
             <!-- Sección para seleccionar fecha y hora -->
-            <div class="form-group">
+            <div class="form-group button-center">
           <label for="fecha" class="text-left">Fecha</label>
-          <div class="input-container text-center">
-            <button class=" btn-verHoras text-white rounded-pill btn-lg" @click="abrirDialogo">Ver horas</button>
+          <div class="input-container">
+            <button class="mt-5  btn-verHoras text-white rounded-pill btn-lg" @click="abrirDialogo">Ver horas</button>
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="estado_pago" class="text-left">Estado Pago:</label>
-          <div class="input-container text-right">
-            <input type="text" v-model="cita.estado_pago" required class="elevation-1"/>
-          </div>
-        </div>
 
             <div class="button-container">
         <button class="mt-10 btn-secondary btn-lg rounded-pill text-white btn-grande" @click="irAtras">
@@ -84,11 +78,11 @@
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
+import { v4 as uuidv4 } from "uuid";
 import CalendarioHora from "../views/CalendarioHora.vue"; // Ajusta la ruta según la ubicación de tu componente
 
 
 interface Cita {
-  _id: string;
   email: string;
   name: string;
   last_name: string;
@@ -108,7 +102,7 @@ interface Cita {
 
 
 export default class Agendamiento extends Vue {
-  cita: Cita = {
+  cita: Cita = { // Genera un _id único
     email: "",
     name: "",
     last_name: "",
@@ -116,7 +110,7 @@ export default class Agendamiento extends Vue {
     fecha: new Date(),
     phone: "",
     hora: "",
-    estado_pago: "",
+    estado_pago: "Por Pagar",
   };
 
   horasDisponibles: string[] = ["10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30"];
@@ -206,5 +200,10 @@ export default class Agendamiento extends Vue {
   display: flex;
   justify-content: space-between;
   align-items: baseline; /* Alinear las etiquetas y los campos en la base */
+}
+
+.btn-confirmars {
+  background-color: rgb(14, 14, 248);
+  color: white;
 }
 </style>

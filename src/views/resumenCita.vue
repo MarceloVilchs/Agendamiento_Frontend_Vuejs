@@ -7,6 +7,7 @@
     <!-- Sección de Resumen de Datos del Paciente -->
     <div class="datos-paciente-container">
       <h2>Datos del Paciente</h2>
+      
 
       <!-- Mostrar los datos del paciente -->
       <div class="form">
@@ -31,6 +32,14 @@
           <div class="input-container">{{ cita.last_name2 }}</div>
         </div>
 
+        <div class="form-group">
+          <label>Teléfono:</label>
+          <div class="input-container">{{ cita.phone }}</div>
+        </div>
+
+        <div class="cita-title">
+          <h2>Cita</h2>
+        </div>
         <!-- Sección para mostrar la fecha en ResumenCita.vue -->
         <div class="form-group">
           <label for="fecha">Fecha:</label>
@@ -38,21 +47,9 @@
         </div>
 
         <div class="form-group">
-          <label>Teléfono:</label>
-          <div class="input-container">{{ cita.phone }}</div>
-        </div>
-
-        <div class="form-group">
   <label>Hora:</label>
   <div class="input-container">{{ cita.hora }}</div>
 </div>
-
-
-        <div class="form-group">
-          <label>estado_pago:</label>
-          <div class="input-container">{{ cita.estado_pago }}</div>
-        </div>
-
         <button class="mt-10 text-white btn-primary btn-lg rounded-pill btn-grande"  @click="agendarCita" type="button">
           <b>Agendar Cita</b>
         </button>
@@ -110,6 +107,7 @@ import axios, { AxiosRequestConfig } from "axios";
 
 interface Cita {
   // Tipo de tus datos del formulario
+
   email: string;
   name: string;
   last_name: string;
@@ -126,6 +124,7 @@ interface Cita {
 export default class ResumenCita extends Vue {
   // Propiedad para recibir los datos de la cita desde el componente padre
   cita: Cita = this.$route.params.cita || {
+
     email: "",
     name: "",
     last_name: "",

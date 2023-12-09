@@ -1,13 +1,11 @@
-
 <template>
-    
     <div>
       <h1 class="text-center" style="color: white; background-color: rgb(79, 235, 162);">
         Listado de Citas Médicas
       </h1>
   
       <!-- Mostrar información de las citas -->
-      <div v-for="cita in citas" :key="cita._id" class="cita-container">
+      <div v-for="cita in citas" :key="cita.name" class="cita-container">
         <!-- Información de la cita -->
         <div class="cita-info">
           <div class="info-group"><strong>Nombre Paciente</strong><br />{{ cita.name }}</div>
@@ -20,110 +18,120 @@
   
         <!-- Botones al lado izquierdo -->
         <div class="cita-buttons">
-            <button @click="pagarOnline(cita.name)" class="custom-btn" id="pagarBtn">
+          <button @click="pagarOnline(cita.name)" class="custom-btn" id="pagarBtn">
             Pagar Online
-            </button>
-            <button @click="editarCita(cita.name)" class="custom-btn" id="editarBtn">
+          </button>
+          <button @click="editarCita(cita.name)" class="custom-btn" id="editarBtn">
             Editar
+          </button>
+  
+          <!-- Agrega este log para verificar el ID de la cita -->
+          <button @click="showCitaId(cita)" class="custom-btn" id="eliminarBtn">
+            {{ cita.eliminacionEnProgreso ? 'Eliminando...' : 'Eliminar Cita' }}
             </button>
-
-            <!-- Agrega este log para verificar el ID de la cita -->
-            <button @click="cancelarCita(cita._id)" class="custom-btn" id="cancelarBtn" :disabled="cita.cancellationInProgress" >
-                {{ cita.cancellationInProgress ? 'Cancelando...' : 'Cancelar Cita' }}
-            </button>
-
         </div>
       </div>
     </div>
   </template>
   
   <script lang="ts">
-import { ObjectId } from "bson";
-import axios from "axios";
+  import axios from "axios";
+  import { Vue, Component } from 'vue-property-decorator';
   
-  export default {
-    data() {
-      return {
-        citas: [], // Aquí se almacenarán las citas obtenidas del servidor
-      };
-    },
+  @Component({
+  name: "listar-cita",
+})
+
+  export default class ListarCita extends Vue {
+    citas: any[] = [];
+  
     mounted() {
-      // Llamada al método GET para obtener las citas
       this.fetchCitas();
-    },
-    methods: {
-
-
-      // Método GET para obtener las citas de la base de datos
-      async fetchCitas() {
-        try {
-          // Realizar la llamada al endpoint para obtener las citas
-          const response = await fetch("http://localhost:8000/usuarioFormulario/usuarioFormulario/GET", {
+    }
+  
+    async fetchCitas() {
+      try {
+        const response = await fetch("http://localhost:8000/usuarioFormulario/usuarioFormulario/GET", {
           headers: {
             Authorization: `Bearer ${this.$store.state.token}`,
           },
         });
+  
         const data = await response.json();
-          // Asignar las citas a la propiedad citas
-          this.citas = data;
-        } catch (error) {
+  
+        // No formatear la fecha, dejarla como está en el formato original
+        this.citas = data;
+      } catch (error) {
         console.error("Error al obtener las citas:", error);
       }
-    },
-
-
-
-     //Método DELETE para borrar la cita de la base de datos
-     async cancelarCita(cita) {
-      try {
-        // Obtener el ID de la cita del objeto cita
-        const citaId = cita._id;
-
-        // Verificar si el ID de la cita es válido
-        if (!cita || !cita._id) {
-      console.error("Cita no válida o sin ID");
+    }
+  
+    public deleteCita(name: string) {
+  try {
+    const cita = this.citas.find(c => c.name === name);
+    if (!cita) {
+      console.error("Cita no encontrada para el nombre:", name);
       return;
     }
-    
 
-        // Configuración para la solicitud DELETE
-        const config = {
-          method: 'DELETE',
-          url: `http://localhost:8000/usuarioFormulario/usuarioFormulario/${citaId}`,
-          headers: {
-            Authorization: `Bearer ${this.$store.state.token}`,
-          },
-        };
+    cita.eliminacionEnProgreso = true;
 
-        // Realizar la solicitud DELETE
-        const response = await axios(config);
+    const config = {
+      method: 'delete',
+      url: `http://localhost:8000/usuarioFormulario/usuarioFormulario?name=${name}`,
+      headers: {
+        Authorization: `Bearer ${this.$store.state.token}`,
+      },
+    };
 
-        if (response.status === 200) {
-          console.log(`Cita ID ${citaId} cancelada con éxito.`);
-          // Actualizar la lista de citas después de la cancelación
-          this.fetchCitas();
+    axios(config)
+      .then(response => {
+        console.log(response.data.message);
+        this.fetchCitas();
+      })
+      .catch(error => {
+        console.error("Error al eliminar la cita:", error);
+
+        // Agrega esta parte para obtener más detalles sobre el error
+        if (error.response) {
+          console.error('Respuesta del servidor:', error.response.data);
+          console.error('Código de estado HTTP:', error.response.status);
+        } else if (error.request) {
+          console.error('No se recibió respuesta del servidor');
         } else {
-          console.error(`Error al cancelar la cita ID ${citaId}: ${response.statusText}`);
-          // Restaurar el estado en caso de error
-          this.citas = this.citas.map((c) => ({ ...c, cancellationInProgress: false }));
+          console.error('Error durante la solicitud:', error.message);
         }
-      } catch (error) {
-        console.error("Error al cancelar la cita:", error);
-        // Restaurar el estado en caso de error
-        this.citas = this.citas.map((c) => ({ ...c, cancellationInProgress: false }));
-      }
-    },
+      })
+      .finally(() => {
+        cita.eliminacionEnProgreso = false;
+      });
+  } catch (error) {
+    console.error("Error al eliminar la cita:", error);
+  }
+}
 
-      pagarOnline(name) {
-        console.log(`Pagar Online - Cita ID: ${name}`);
-      },
-      editarCita(name) {
-        console.log(`Editar - Cita ID: ${name}`);
-      },
 
-    },
-  };
+
+    pagarOnline(citaId) {
+      console.log(`Pagar Online - Cita name: ${citaId}`);
+    }
+  
+    editarCita(citaId) {
+      console.log(`Editar - Cita name: ${citaId}`);
+    }
+
+showCitaId(cita: Cita) {
+    // Verificar si el nombre de la cita está definido
+    if (cita && 'name' in cita && cita.name) {
+      console.log('Nombre de la Cita:', cita.name);
+      this.deleteCita(cita.name);
+    } else {
+      console.error('Error: Nombre de la cita no definido');
+    }
+  }
+  }
   </script>
+  
   
   <style scoped>
   /* Estilos opcionales para el diseño */
