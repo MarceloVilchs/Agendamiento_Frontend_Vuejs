@@ -50,7 +50,7 @@
             <div class="form-group button-center">
           <label for="fecha" class="text-left">Fecha</label>
           <div class="input-container">
-            <button class="mt-5  btn-verHoras text-white rounded-pill btn-lg" @click="abrirDialogo">Ver horas</button>
+            <button class="mt-5  btn-verHoras text-white rounded-pill btn-lg" @click="abrirDialogo">Ver fecha y horas</button>
           </div>
         </div>
 
@@ -78,7 +78,6 @@
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
-import { v4 as uuidv4 } from "uuid";
 import CalendarioHora from "../views/CalendarioHora.vue"; // Ajusta la ruta según la ubicación de tu componente
 
 
@@ -151,6 +150,7 @@ export default class Agendamiento extends Vue {
 
   seleccionarHora(hora: string) {
     this.cita.hora = hora;
+    console.log("Hora seleccionada:", hora);
   }
 
 //Dialogo para abrir componente CalendarioHora

@@ -8,6 +8,7 @@ import listarCita from '../views/listarCita.vue'
 import Agendamiento from '../views/Agendamiento.vue'
 import resumenCita from '../views/resumenCita.vue'
 import CalendarioHora from '../views/CalendarioHora.vue'
+import EditarCita from '../views/EditarCita.vue'
 
 
 Vue.use(VueRouter)
@@ -54,6 +55,13 @@ const routes: Array<RouteConfig> = [
         path: '/home/inicio/CalendarioHora',
         name: 'CalendarioHora',
         component: CalendarioHora, 
+        props: true // Permite pasar props a través de la ruta
+      },
+      {
+        path: '/home/inicio/EditarCita',
+        name: 'EditarCita',
+        component: EditarCita, 
+        props: true // Permite pasar props a través de la ruta
       },
     ] 
   }
